@@ -1,5 +1,7 @@
 package io.github.javaasasecondlanguage.homework01.mergeintervals;
 
+import java.util.Arrays;
+
 public class IntervalsMerger {
     /**
      * Given array of intervals, merge overlapping intervals and sort them by start in ascending order
@@ -16,6 +18,60 @@ public class IntervalsMerger {
      * @throws IllegalArgumentException if intervals is null
      */
     public int[][] merge(int[][] intervals) {
-        throw new RuntimeException("Not implemented");
+        if (intervals == null) throw new IllegalArgumentException("intervals is null");
+        if (intervals.length == 0) return intervals;
+
+
+        simpleSort(intervals);
+
+        int[][] newIntervals = new int[intervals.length][2];
+
+        int baseIndex = 0, newBaseIndex = 0;
+        int compareIndex = 1;
+
+        while (true) {
+            if (compareIndex >= intervals.length) {
+                newIntervals[newBaseIndex] = intervals[baseIndex];
+                newBaseIndex++;
+                break;
+            }
+
+            if (intervals[baseIndex][1] >= intervals[compareIndex][1]) {
+                //Интервал целиком входит в предыдущий
+                compareIndex++;
+                continue;
+            }
+
+            if (intervals[baseIndex][1] >= intervals[compareIndex][0] && intervals[baseIndex][1] < intervals[compareIndex][1]) {
+                //пересечение интервалов. подправим верхнюю границу базового интервала.
+                intervals[baseIndex][1] = intervals[compareIndex][1];
+                compareIndex++;
+                continue;
+            }
+
+            if (intervals[baseIndex][1] < intervals[compareIndex][0]) {
+                //нет пересечения. формируем элемент выходного массива.
+                newIntervals[newBaseIndex] = intervals[baseIndex];
+                newBaseIndex++;
+                baseIndex = compareIndex;
+                compareIndex++;
+            }
+
+        }
+        return Arrays.copyOfRange(newIntervals, 0, newBaseIndex);
+
+    }
+
+    private static void simpleSort(int[][] sortArray) {
+        int[] temp;
+        for (int i = 1; i < sortArray.length; i++) {
+            int j = i;
+            while (j > 0 && sortArray[j - 1][0] > sortArray[j][0]) {
+                temp = sortArray[j - 1];
+                sortArray[j - 1] = sortArray[j];
+                sortArray[j] = temp;
+                j--;
+            }
+        }
     }
 }

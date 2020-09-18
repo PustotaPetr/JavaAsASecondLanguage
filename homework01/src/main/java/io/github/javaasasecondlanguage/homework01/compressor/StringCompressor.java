@@ -3,7 +3,7 @@ package io.github.javaasasecondlanguage.homework01.compressor;
 public class StringCompressor {
     /**
      * Given an array of characters, compress it using the following algorithm:
-     *
+     * <p>
      * Begin with an empty string s.
      * For each group of consecutive repeating characters in chars:
      * If the group's length is 1, append the character to s.
@@ -29,6 +29,34 @@ public class StringCompressor {
      * @throws IllegalArgumentException if any char is not in range 'a'..'z'
      */
     public char[] compress(char[] str) {
-        throw new RuntimeException("Not implemented");
+        if (str == null) throw new IllegalArgumentException("str is null");
+        if (str.length == 0) return str;
+
+        StringBuilder builder = new StringBuilder();
+        char lastChar = str[0];
+        int charCounter = 1;
+        char currentChar;
+        for (int i = 1; i <= str.length; i++) {
+            if (i == str.length) {
+                currentChar = 0;
+            } else {
+                currentChar = str[i];
+            }
+            if (lastChar < 'a' || lastChar > 'z') throw new IllegalArgumentException("char not in range 'a'..'z'");
+            if (lastChar != currentChar) {
+
+                if (charCounter > 1) {
+                    builder.append(lastChar);
+                    builder.append(charCounter);
+                } else {
+                    builder.append(lastChar);
+                }
+                lastChar = currentChar;
+                charCounter = 1;
+            } else {
+                charCounter++;
+            }
+        }
+        return builder.toString().toCharArray();
     }
 }
