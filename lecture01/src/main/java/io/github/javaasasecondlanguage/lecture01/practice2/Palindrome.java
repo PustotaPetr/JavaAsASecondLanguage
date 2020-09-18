@@ -11,6 +11,8 @@ public class Palindrome {
      * @throws IllegalArgumentException if str is `null`
      */
     public static boolean isPalindrome(String str) {
-        throw new RuntimeException("Not implemented");
+        if (str == null) throw new IllegalArgumentException();
+        StringBuilder sb = new StringBuilder(str);
+        return str.equals(sb.reverse().toString());
     }
 }
