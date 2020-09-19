@@ -1,5 +1,7 @@
 package io.github.javaasasecondlanguage.homework01.compressor;
 
+import java.util.Arrays;
+
 public class StringCompressor {
     /**
      * Given an array of characters, compress it using the following algorithm:
@@ -32,24 +34,31 @@ public class StringCompressor {
         if (str == null) throw new IllegalArgumentException("str is null");
         if (str.length == 0) return str;
 
-        StringBuilder builder = new StringBuilder();
         char lastChar = str[0];
         int charCounter = 1;
+        int compressedCharCounter = 0;
         char currentChar;
+
         for (int i = 1; i <= str.length; i++) {
             if (i == str.length) {
                 currentChar = 0;
             } else {
                 currentChar = str[i];
             }
+
             if (lastChar < 'a' || lastChar > 'z') throw new IllegalArgumentException("char not in range 'a'..'z'");
             if (lastChar != currentChar) {
 
                 if (charCounter > 1) {
-                    builder.append(lastChar);
-                    builder.append(charCounter);
+                    str[compressedCharCounter] = lastChar;
+                    compressedCharCounter++;
+                    for (char s: String.valueOf(charCounter).toCharArray()) {
+                        str[compressedCharCounter] = s;
+                        compressedCharCounter++;
+                    }
                 } else {
-                    builder.append(lastChar);
+                    str[compressedCharCounter] = lastChar;
+                    compressedCharCounter++;
                 }
                 lastChar = currentChar;
                 charCounter = 1;
@@ -57,6 +66,6 @@ public class StringCompressor {
                 charCounter++;
             }
         }
-        return builder.toString().toCharArray();
+        return Arrays.copyOfRange(str, 0, compressedCharCounter);
     }
 }
