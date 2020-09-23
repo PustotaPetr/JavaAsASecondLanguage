@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class IntervalsMerger {
     /**
-     * Given array of intervals, merge overlapping intervals and sort them by start in ascending order
+     * Given array of intervals, merge overlap intervals and sort them by start in ascending order
      * Interval is defined as [start, end] where start < end
      * <p>
      * Examples:
@@ -13,48 +13,53 @@ public class IntervalsMerger {
      * [[1,4][2,3]] -> [[1,4]]
      * [[5,6][1,2]] -> [[1,2][5,6]]
      *
-     * @param intervals is a nullable array of pairs [start, end]
+     * @param diap is a nullable array of pairs [start, end]
      * @return merged intervals
      * @throws IllegalArgumentException if intervals is null
      */
-    public int[][] merge(int[][] intervals) {
-        if (intervals == null) throw new IllegalArgumentException("intervals is null");
-        if (intervals.length == 0) return intervals;
+    public int[][] merge(int[][] diap) {
+        if (diap == null) {
+            throw new IllegalArgumentException("intervals is null");
+        }
+        if (diap.length == 0) {
+            return diap;
+        }
 
 
-        simpleSort(intervals);
+        simpleSort(diap);
 
-        int[][] newIntervals = new int[intervals.length][2];
+        int[][] newIntervals = new int[diap.length][2];
 
-        int baseIndex = 0, newBaseIndex = 0;
-        int compareIndex = 1;
+        int baseInd = 0;
+        int newBaseIndex = 0;
+        int compareInd = 1;
 
         while (true) {
-            if (compareIndex >= intervals.length) {
-                newIntervals[newBaseIndex] = intervals[baseIndex];
+            if (compareInd >= diap.length) {
+                newIntervals[newBaseIndex] = diap[baseInd];
                 newBaseIndex++;
                 break;
             }
 
-            if (intervals[baseIndex][1] >= intervals[compareIndex][1]) {
+            if (diap[baseInd][1] >= diap[compareInd][1]) {
                 //Интервал целиком входит в предыдущий
-                compareIndex++;
+                compareInd++;
                 continue;
             }
 
-            if (intervals[baseIndex][1] >= intervals[compareIndex][0] && intervals[baseIndex][1] < intervals[compareIndex][1]) {
+            if (diap[baseInd][1] >= diap[compareInd][0] && diap[baseInd][1] < diap[compareInd][1]) {
                 //пересечение интервалов. подправим верхнюю границу базового интервала.
-                intervals[baseIndex][1] = intervals[compareIndex][1];
-                compareIndex++;
+                diap[baseInd][1] = diap[compareInd][1];
+                compareInd++;
                 continue;
             }
 
-            if (intervals[baseIndex][1] < intervals[compareIndex][0]) {
+            if (diap[baseInd][1] < diap[compareInd][0]) {
                 //нет пересечения. формируем элемент выходного массива.
-                newIntervals[newBaseIndex] = intervals[baseIndex];
+                newIntervals[newBaseIndex] = diap[baseInd];
                 newBaseIndex++;
-                baseIndex = compareIndex;
-                compareIndex++;
+                baseInd = compareInd;
+                compareInd++;
             }
 
         }

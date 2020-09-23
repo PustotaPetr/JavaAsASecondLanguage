@@ -31,8 +31,12 @@ public class StringCompressor {
      * @throws IllegalArgumentException if any char is not in range 'a'..'z'
      */
     public char[] compress(char[] str) {
-        if (str == null) throw new IllegalArgumentException("str is null");
-        if (str.length == 0) return str;
+        if (str == null) {
+            throw new IllegalArgumentException("str is null");
+        }
+        if (str.length == 0) {
+            return str;
+        }
 
         char lastChar = str[0];
         int charCounter = 1;
@@ -46,13 +50,15 @@ public class StringCompressor {
                 currentChar = str[i];
             }
 
-            if (lastChar < 'a' || lastChar > 'z') throw new IllegalArgumentException("char not in range 'a'..'z'");
+            if (lastChar < 'a' || lastChar > 'z') {
+                throw new IllegalArgumentException("char not in range 'a'..'z'");
+            }
             if (lastChar != currentChar) {
 
                 if (charCounter > 1) {
                     str[compressedCharCounter] = lastChar;
                     compressedCharCounter++;
-                    for (char s: String.valueOf(charCounter).toCharArray()) {
+                    for (char s : String.valueOf(charCounter).toCharArray()) {
                         str[compressedCharCounter] = s;
                         compressedCharCounter++;
                     }
