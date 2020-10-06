@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Context {
     private final Map<Class<?>, HashMap<String, Object>> contextStore;
-    public final String EMPTY_QUALIFIER = "";
+    public final String emptyQualifier = "";
 
     public Context() {
         contextStore = new HashMap<>();
@@ -36,7 +36,7 @@ public class Context {
     }
 
     public <T> Context register(T object) {
-        return register(object, EMPTY_QUALIFIER);
+        return register(object, emptyQualifier);
     }
 
     public <T> T findInjection(Class<T> clazz, String qualifier) {
