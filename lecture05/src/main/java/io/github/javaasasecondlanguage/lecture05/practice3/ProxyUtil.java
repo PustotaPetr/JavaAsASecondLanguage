@@ -16,6 +16,9 @@ public class ProxyUtil {
     }
 
     static <K, V> Map<K, V> wrap(Map<K, V> original) {
-        throw new RuntimeException("Not implemented");
+        return (Map<K, V>) Proxy.newProxyInstance(original.getClass().getClassLoader(),
+                original.getClass().getInterfaces(),
+                new HandlerMap(original));
+
     }
 }
