@@ -17,13 +17,14 @@ public class HandlerMap implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        Object invoke = method.invoke(map, args);
+        Object invoke;
+        invoke = method.invoke(map, args);
         String status = "";
         for (Object key : map.keySet()) {
             status += "(" + "\"" + key.toString() + "\", " + map.get(key) + "), ";
         }
         if (status.length() > 0) {
-            status = status.substring(0, status.length()-2);
+            status = status.substring(0, status.length() - 2);
         }
         history.add(status);
         String methodStr = "";
@@ -41,7 +42,7 @@ public class HandlerMap implements InvocationHandler {
         System.out.println(methodStr);
         System.out.println("History:");
 
-        for (String step: history            ) {
+        for (String step : history) {
             System.out.println("[" + step + "]");
         }
         return invoke;
