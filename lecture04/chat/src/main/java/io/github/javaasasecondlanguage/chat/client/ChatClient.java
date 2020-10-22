@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 public class ChatClient {
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final String PROTOCOL = "http://";
-    private static final String HOST = "localhost";//change to 3.236.217.35 for practice 1
+    private static final String HOST = "localhost";//"3.236.217.35";//"localhost";//change to 3.236.217.35 for practice 1
     private static final String PORT = ":8080";
 
     //POST host:port/chat/login?name=my_name
@@ -39,11 +39,24 @@ public class ChatClient {
     //Body: "msg='my_message'"
     public static HttpResponse<?> say(String name, String msg)
             throws IOException, InterruptedException {
-        throw new RuntimeException("Not implemented");
+        HttpRequest request = HttpRequest
+                .newBuilder()
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString("msg=" + msg))
+                .uri(URI.create(PROTOCOL + HOST + PORT + "/chat/say?name=" + name))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response;
     }
 
     //GET host:port/chat/online
-    public static HttpResponse<?> viewOnline() throws IOException, InterruptedException {
-        throw new RuntimeException("Not implemented");
+    public static HttpResponse<String> viewOnline() throws IOException, InterruptedException {
+        String REQUEST_STR = "/chat/online";
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(PROTOCOL + HOST + PORT + REQUEST_STR))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response;
     }
 }
