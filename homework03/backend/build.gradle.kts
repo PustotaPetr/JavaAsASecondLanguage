@@ -3,6 +3,7 @@ version = "1.0-SNAPSHOT"
 
 plugins {
     java
+    checkstyle
     id("org.springframework.boot") version "2.3.4.RELEASE"
 }
 
@@ -15,9 +16,11 @@ repositories {
     mavenCentral()
 }
 
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator:2.3.4.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-web:2.3.4.RELEASE")
+    implementation("com.google.code.gson:gson:2.8.6")
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.3.4.RELEASE") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
@@ -27,3 +30,4 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
