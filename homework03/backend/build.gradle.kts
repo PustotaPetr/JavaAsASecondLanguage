@@ -3,7 +3,6 @@ version = "1.0-SNAPSHOT"
 
 plugins {
     java
-    checkstyle
     id("org.springframework.boot") version "2.3.4.RELEASE"
 }
 
