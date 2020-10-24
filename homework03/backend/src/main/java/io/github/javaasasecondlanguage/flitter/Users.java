@@ -4,14 +4,16 @@ package io.github.javaasasecondlanguage.flitter;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("user")
 public class Users {
-    Map<String, String> users = new HashMap<>();
+    public static Map<String, String> users = new ConcurrentHashMap<>();
 
     @RequestMapping(path = "list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map list() {
@@ -27,7 +29,7 @@ public class Users {
     @RequestMapping(path = "register", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Map register(@RequestBody() String userStr) {
+    public ResponseEntity<Map> register(@RequestBody() String userStr) {
         Gson gson = new Gson();
         InputUser user = gson.fromJson(userStr, InputUser.class);
         user.userToken = UUID.randomUUID().toString();
@@ -36,12 +38,12 @@ public class Users {
             HashMap<String, String> response = new HashMap<>();
             response.put("data", null);
             response.put("errorMessage", "This name is already taken");
-            return response;
+
+            return ResponseEntity.badRequest().body(response);
         } else {
             users.put(user.userToken, user.userName);
-            return Collections.singletonMap("data", user);
+            return ResponseEntity.ok(Collections.singletonMap("data", user));
         }
-
     }
 
     private class InputUser {
@@ -52,10 +54,6 @@ public class Users {
             super();
             this.userName = userName;
             this.userToken = "";
-        }
-
-        public String toString() {
-            return "userName=" + userName + " , uid=" + userToken;
         }
     }
 }
