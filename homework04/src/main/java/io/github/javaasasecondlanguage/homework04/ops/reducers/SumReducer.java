@@ -10,19 +10,27 @@ import java.util.Map;
  * Counts sum of values in a specified column for each group and returns a single record with a sum.
  */
 public class SumReducer implements Reducer {
+    private final String inputColumn;
+    private final String outputColumn;
+    int currentSum = 0;
 
     public SumReducer(String inputColumn, String outputColumn) {
-        throw new IllegalStateException("You must implement this");
+        this.inputColumn = inputColumn;
+        this.outputColumn = outputColumn;
     }
 
     @Override
     public void apply(Record inputRecord, Collector collector, Map<String, Object> groupByEntries) {
-        throw new IllegalStateException("You must implement this");
+        currentSum += (int)inputRecord.get(inputColumn);
     }
 
     @Override
     public void signalGroupWasFinished(Collector collector, Map<String, Object> groupByEntries) {
-        throw new IllegalStateException("You must implement this");
+        Record outputRecord = new Record(groupByEntries);
+        outputRecord.set(outputColumn, currentSum);
+        collector.collect(outputRecord);
+
+        currentSum = 0;
     }
 
 }
