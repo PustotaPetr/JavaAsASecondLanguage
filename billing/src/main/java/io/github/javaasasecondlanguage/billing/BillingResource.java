@@ -23,24 +23,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @Controller
 @RequestMapping("billing")
 public class BillingResource {
-    class Account {
-        final String name;
-        Integer money;
-
-        Account(String name, Integer money) {
-            this.name = name;
-            this.money = money;
-        }
-
-        @Override
-        public String toString() {
-            return "Account{" +
-                    "name='" + name + '\'' +
-                    ", money=" + money +
-                    '}';
-        }
-    }
-
     private Map<String, Account> userToMoney = new ConcurrentHashMap<>();
 
     /**
@@ -62,7 +44,8 @@ public class BillingResource {
         Account newAccount = new Account(user, money);
         userToMoney.put(user, newAccount);
 
-        return ResponseEntity.ok("Successfully created user [" + user + "] with money " + userToMoney.get(user) + "\n");
+        return ResponseEntity.ok("Successfully created user [" + user + "] with money "
+                + userToMoney.get(user) + "\n");
     }
 
     /**
@@ -118,5 +101,21 @@ public class BillingResource {
             result = ResponseEntity.ok(userToMoney + "\n");
         }
         return result;
+    }
+
+    class Account {
+        final String name;
+        Integer money;
+
+        Account(String name, Integer money) {
+            this.name = name;
+            this.money = money;
+        }
+
+        @Override
+        public String toString() {
+            return "Account{" + "name='" + name + '\''
+                    + ", money=" + money + '}';
+        }
     }
 }

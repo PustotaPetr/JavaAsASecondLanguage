@@ -28,7 +28,7 @@ dependencies {
 
 checkstyle {
     toolVersion = "8.36.1"
-    config = resources.text.fromFile("../../config/checkstyle/checkstyle.xml")
+    config = resources.text.fromFile("../config/checkstyle/checkstyle.xml")
 }
 
 tasks.withType<Checkstyle> {
