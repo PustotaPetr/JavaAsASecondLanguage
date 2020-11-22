@@ -9,17 +9,39 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Broken implementation of billing service
- * Money are lost here
+ * fixed implementation of billing service
+ * Money are safe here
  */
 @Controller
 @RequestMapping("billing")
 public class BillingResource {
-    private Map<String, Integer> userToMoney = new HashMap<>();
+    class Account {
+        final String name;
+        Integer money;
+
+        Account(String name, Integer money) {
+            this.name = name;
+            this.money = money;
+        }
+
+        @Override
+        public String toString() {
+            return "Account{" +
+                    "name='" + name + '\'' +
+                    ", money=" + money +
+                    '}';
+        }
+    }
+
+    private Map<String, Account> userToMoney = new ConcurrentHashMap<>();
 
     /**
      * curl -XPOST localhost:8080/billing/addUser -d "user=sasha&money=100000"
@@ -36,7 +58,9 @@ public class BillingResource {
         if (user == null || money == null) {
             return ResponseEntity.badRequest().body("");
         }
-        userToMoney.put(user, money);
+
+        Account newAccount = new Account(user, money);
+        userToMoney.put(user, newAccount);
 
         return ResponseEntity.ok("Successfully created user [" + user + "] with money " + userToMoney.get(user) + "\n");
     }
@@ -55,14 +79,29 @@ public class BillingResource {
         if (fromUser == null || toUser == null || money == null) {
             return ResponseEntity.badRequest().body("");
         }
+
         if (!userToMoney.containsKey(fromUser) || !userToMoney.containsKey(toUser)) {
             return ResponseEntity.badRequest().body("No such user\n");
         }
-        if (userToMoney.get(fromUser) < money) {
-            return ResponseEntity.badRequest().body("Not enough money to send\n");
+
+        ArrayList<Account> users = new ArrayList<>();
+        users.add(userToMoney.get(fromUser));
+        users.add(userToMoney.get((toUser)));
+        Collections.sort(users, new Comparator<Account>() {
+            @Override
+            public int compare(Account o1, Account o2) {
+                return o1.name.compareTo(o2.name);
+            }
+        });
+        synchronized (users.get(0)) {
+            synchronized (users.get(1)) {
+                if (userToMoney.get(fromUser).money < money) {
+                    return ResponseEntity.badRequest().body("Not enough money to send\n");
+                }
+                userToMoney.get(fromUser).money -= money;
+                userToMoney.get(toUser).money += money;
+            }
         }
-        userToMoney.put(fromUser, userToMoney.get(fromUser) - money);
-        userToMoney.put(toUser, userToMoney.get(toUser) + money);
         return ResponseEntity.ok("Send success\n");
     }
 
@@ -74,6 +113,10 @@ public class BillingResource {
             method = RequestMethod.GET,
             produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getStat() {
-        return ResponseEntity.ok(userToMoney + "\n");
+        ResponseEntity<String> result;
+        synchronized (userToMoney) {
+            result = ResponseEntity.ok(userToMoney + "\n");
+        }
+        return result;
     }
 }
